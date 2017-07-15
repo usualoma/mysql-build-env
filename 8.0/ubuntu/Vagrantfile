@@ -1,0 +1,17 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu-zesty-amd64"
+  config.vm.box_url = "https://cloud-images.ubuntu.com/zesty/current/zesty-server-cloudimg-amd64-vagrant.box"
+
+  config.vm.network :private_network, ip: "192.168.222.12"
+  config.vm.synced_folder "mysql-server/", "/mysql-server", type: "nfs", :mount_options => ['noatime','vers=3','udp']
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get -y build-dep mysql-server
+    apt-get -y install libboost1.63 libboost1.63-dev
+    apt-get clean 
+  SHELL
+end
